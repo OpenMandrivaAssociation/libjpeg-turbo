@@ -11,7 +11,7 @@ Name:		libjpeg-turbo
 Version:	1.0.90
 Release:	2
 Epoch:		1
-License:	wxWidgets
+License:	wxWidgets Library License
 Group:		System/Libraries
 URL:		http://sourceforge.net/projects/libjpeg-turbo
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
