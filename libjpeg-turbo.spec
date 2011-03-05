@@ -22,6 +22,7 @@ Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
 Patch0:		jpeg-6b-c++fixes.patch
+Patch1:		libjpeg-turbo11-noinst_jpgtest.patch
 
 BuildRequires:	libtool >= 1.4
 %ifarch %{ix86} x86_64
@@ -115,11 +116,13 @@ have orientation markings in the EXIF data.
 %prep
 %setup -q
 %patch0 -p0
+%patch1 -p1
 
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
 %build
+autoreconf -fi
 mkdir -p jpeg8
 pushd jpeg8
 CONFIGURE_TOP=.. \
