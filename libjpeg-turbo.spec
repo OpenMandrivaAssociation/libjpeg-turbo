@@ -9,7 +9,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Version:	1.0.90
-Release:	2
+Release:	3
 Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -162,7 +162,13 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 chmod -x README-turbo.txt
 
 # Remove unwanted files
-rm -f %{buildroot}%{_libdir}/lib{,turbo}jpeg.la
+rm -f %{buildroot}%{_libdir}/libturbojpeg.la
+
+# keep libjpeg.la to allow using jpeg-turbo where jpeg-8c would have been
+# and correct link of -devel .so to proper version, and not .so.62 one
+pushd %{buildroot}%{_libdir}
+    ln -sf libjpeg.so.8.0.2 libjpeg.so
+popd
 
 # Don't distribute libjpegturbo because it is unversioned
 rm -f %{buildroot}%{_includedir}/turbojpeg.h
@@ -180,6 +186,7 @@ rm -rf %{buildroot}
 
 %files -n %{devname}
 %doc coderules.txt example.c jconfig.txt libjpeg.txt LICENSE.txt structure.txt filelist.txt
+%{_libdir}/*.la
 %{_libdir}/*.so
 %{_includedir}/*.h
 
