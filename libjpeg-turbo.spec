@@ -9,7 +9,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Version:	1.1.0
-Release:	2
+Release:	3
 Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -60,6 +60,7 @@ Summary:	Development tools for programs which will use the libjpeg-turbo library
 Group:		Development/C
 Requires:	%{libname} = %{EVRD}
 Provides:	jpeg-devel = %{EVRD}
+Provides:	libjpeg-devel = %{EVRD}
 Provides:	jpeg%{major}-devel = %{EVRD}
 Conflicts:	jpeg6-devel
 Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
