@@ -1,7 +1,6 @@
 %define major 8
 %define libname %mklibname jpeg %{major}
 %define devname %mklibname -d jpeg
-%define statname %mklibname -s -d jpeg
 
 %define	major62	62
 %define	libname62 %mklibname jpeg %{major62}
@@ -9,7 +8,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Version:	1.1.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -23,8 +22,7 @@ Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
 Patch0:		jpeg-6b-c++fixes.patch
 Patch1:		libjpeg-turbo11-noinst_jpgtest.patch
-
-BuildRequires:	libtool >= 1.4
+BuildRequires:	autoconf automake libtool >= 1.4
 %ifarch %{ix86} x86_64
 BuildRequires:	nasm
 %endif
@@ -58,7 +56,7 @@ linked with libjpeg-turbo.
 %package -n	%{devname}
 Summary:	Development tools for programs which will use the libjpeg-turbo library
 Group:		Development/C
-Requires:	%{libname} = %{EVRD}
+Requires:	%{libname} >= %{EVRD}
 Provides:	jpeg-devel = %{EVRD}
 Provides:	libjpeg-devel = %{EVRD}
 Provides:	jpeg%{major}-devel = %{EVRD}
@@ -72,26 +70,6 @@ libjpeg-turbo library.
 
 If you are going to develop programs which will manipulate JPEG images,
 you should install this package. You'll also need to have the
-libjpeg-turbo package installed.
-
-%package -n	%{statname}
-Summary:	Static libraries for programs which will use the libjpeg-turbo library
-Group:		Development/C
-Requires:	%{devname} = %{EVRD}
-Provides:	libjpeg-static-devel = %{EVRD}
-Provides:	jpeg-static-devel = %{EVRD}
-Provides:	jpeg%{major}-static-devel = %{EVRD}
-Conflicts:	jpeg6-static-devel
-Obsoletes:	%{mklibname jpeg 62 -d -s} < 6b-45
-Obsoletes:	%{mklibname jpeg 7 -d -s} < 7-3
-
-%description -n	%{statname}
-The libjpeg-turbo static devel package includes the static libraries
-necessary for developing programs which will manipulate JPEG files using
-the libjpeg-turbo library.
-
-If you are going to develop programs which will manipulate JPEG images,
-you should install this package.  You'll also need to have the
 libjpeg-turbo package installed.
 
 %package -n	jpeg-progs
@@ -129,7 +107,7 @@ CONFIGURE_TOP=.. \
 CFLAGS="%{optflags} -O3 -funroll-loops -ffast-math" \
 %configure2_5x	--disable-silent-rules \
 		--enable-shared \
-		--enable-static \
+		--disable-static \
 		--with-jpeg8
 %make
 popd
@@ -164,9 +142,6 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 # Fix perms
 chmod -x README-turbo.txt
 
-# Remove unwanted files
-rm -f %{buildroot}%{_libdir}/libturbojpeg.la
-
 # keep libjpeg.la to allow using jpeg-turbo where jpeg-8c would have been
 # and correct link of -devel .so to proper version, and not .so.62 one
 pushd %{buildroot}%{_libdir}
@@ -177,8 +152,8 @@ popd
 rm -f %{buildroot}%{_includedir}/turbojpeg.h
 rm -f %{buildroot}%{_libdir}/libturbojpeg.{so,a}
 
-%clean
-rm -rf %{buildroot}
+# cleanup
+rm -f %{buildroot}%{_libdir}/*.*a
 
 %files -n %{libname}
 %doc change.log ChangeLog.txt README README-turbo.txt
@@ -189,12 +164,8 @@ rm -rf %{buildroot}
 
 %files -n %{devname}
 %doc coderules.txt example.c jconfig.txt libjpeg.txt LICENSE.txt structure.txt filelist.txt
-%{_libdir}/*.la
 %{_libdir}/*.so
 %{_includedir}/*.h
-
-%files -n %{statname}
-%{_libdir}/*.a
 
 %files -n jpeg-progs
 %doc usage.txt wizard.txt
