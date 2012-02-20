@@ -113,7 +113,6 @@ cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
 %build
-autoreconf -fi
 mkdir -p jpeg8
 pushd jpeg8
 CONFIGURE_TOP=.. \
