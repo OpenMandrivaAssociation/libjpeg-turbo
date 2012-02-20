@@ -106,6 +106,8 @@ have orientation markings in the EXIF data.
 %prep
 %setup -q
 %patch0 -p0
+# Fix perms
+chmod -x README-turbo.txt
 
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
@@ -148,9 +150,6 @@ install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 
 #(neoclust) Provide jpegint.h because it is needed by certain software
 install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
-
-# Fix perms
-chmod -x README-turbo.txt
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
