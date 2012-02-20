@@ -58,13 +58,9 @@ linked with libjpeg-turbo.
 Summary:	TurboJPEG library
 Group:		System/Libraries
 
-%description -n %{libname62}
+%description -n %{turbo}
 This package contains the library needed to run programs dynamically
 linked with libturbojpeg.
-
-%description -n %{libname62}
-This package contains the library needed to run programs dynamically
-linked with libjpeg.
 
 %package -n	%{devname}
 Summary:	Development tools for programs which will use the libjpeg library
