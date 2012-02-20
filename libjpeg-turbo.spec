@@ -127,9 +127,9 @@ make -C jpeg8 test
 make -C jpeg62 test
 
 %install
+make install-libLTLIBRARIES DESTDIR=%{buildroot} -C jpeg62
 %makeinstall_std -C jpeg8
 
-make install-libLTLIBRARIES DESTDIR=%{buildroot} -C jpeg62
 
 install -m755 jpegexiforient -D %{buildroot}%{_bindir}/jpegexiforient
 install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
@@ -139,12 +139,6 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 # Fix perms
 chmod -x README-turbo.txt
-
-# keep libjpeg.la to allow using jpeg-turbo where jpeg-8c would have been
-# and correct link of -devel .so to proper version, and not .so.62 one
-pushd %{buildroot}%{_libdir}
-    ln -sf libjpeg.so.8.0.2 libjpeg.so
-popd
 
 # Don't distribute libjpegturbo because it is unversioned
 rm -f %{buildroot}%{_includedir}/turbojpeg.h
