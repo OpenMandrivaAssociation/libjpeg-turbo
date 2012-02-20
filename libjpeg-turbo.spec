@@ -1,6 +1,7 @@
-%define major	8
-%define libname	%mklibname jpeg %{major}
-%define devname	%mklibname -d jpeg
+%define	major	8
+%define	libname	%mklibname jpeg %{major}
+%define	devname	%mklibname -d jpeg
+%define	statname %mklibname -s -d jpeg
 %define	turbo	%mklibname turbojpeg
 
 %define	major62	62
@@ -84,6 +85,26 @@ If you are going to develop programs which will manipulate JPEG images,
 you should install this package. You'll also need to have the
 libjpeg package installed.
 
+%package -n	%{statname}
+Summary:	Static libraries for programs which will use the libjpeg library
+Group:		Development/C
+Requires:	%{devname} = %{EVRD}
+Provides:	libjpeg-static-devel = %{EVRD}
+Provides:	jpeg-static-devel = %{EVRD}
+Provides:	jpeg%{major}-static-devel = %{EVRD}
+Conflicts:	jpeg6-static-devel
+Obsoletes:	%{mklibname jpeg 62 -d -s} < 6b-45
+Obsoletes:	%{mklibname jpeg 7 -d -s} < 7-3
+ 
+%description -n %{statname}
+The libjpeg static devel package includes the static libraries
+necessary for developing programs which will manipulate JPEG files using
+the libjpeg library.
+ 
+If you are going to develop programs which will manipulate JPEG images,
+you should install this package.  You'll also need to have the
+libjpeg package installed.
+
 %package -n	jpeg-progs
 Summary:	Programs for manipulating JPEG format image files
 Group:		Graphics
@@ -119,7 +140,7 @@ CONFIGURE_TOP=.. \
 CFLAGS="%{optflags} -O3 -funroll-loops -ffast-math" \
 %configure2_5x	--disable-silent-rules \
 		--enable-shared \
-		--disable-static \
+		--enable-static \
 		--with-jpeg8
 %make
 popd
@@ -151,8 +172,7 @@ install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 # cleanup
-rm -f %{buildroot}%{_libdir}/*.*a
-
+rm -f %{buildroot}%{_libdir}/*.la
 rm -f %{buildroot}%{_docdir}/*
 
 %files -n %{libname}
@@ -169,6 +189,10 @@ rm -f %{buildroot}%{_docdir}/*
 %doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt filelist.txt
 %{_libdir}/libjpeg.so
 %{_includedir}/*.h
+
+%files -n %{statname}
+%{_libdir}/libjpeg.a
+%{_libdir}/libturbojpeg.a
 
 %files -n jpeg-progs
 %doc usage.txt wizard.txt
