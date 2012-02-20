@@ -153,6 +153,8 @@ rm -f %{buildroot}%{_libdir}/libturbojpeg.{so,a}
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
 
+rm -f %{buildroot}%{_docdir}/*
+
 %files -n %{libname}
 %doc change.log ChangeLog.txt README README-turbo.txt
 %{_libdir}/libjpeg.so.%{major}*
