@@ -1,6 +1,7 @@
-%define major 8
-%define libname %mklibname jpeg %{major}
-%define devname %mklibname -d jpeg
+%define major	8
+%define libname	%mklibname jpeg %{major}
+%define devname	%mklibname -d jpeg
+%define	turbo	%mklibname turbojpeg
 
 %define	major62	62
 %define	libname62 %mklibname jpeg %{major62}
@@ -42,7 +43,7 @@ Group:		System/Libraries
 
 %description -n %{libname}
 This package contains the library needed to run programs dynamically
-linked with libjpeg-turbo.
+linked with libjpeg.
 
 %package -n	%{libname62}
 Summary:	A library for manipulating JPEG image format files
@@ -52,8 +53,20 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with libjpeg-turbo.
 
+%package -n	%{turbo}
+Summary:	TurboJPEG library
+Group:		System/Libraries
+
+%description -n %{libname62}
+This package contains the library needed to run programs dynamically
+linked with libturbojpeg.
+
+%description -n %{libname62}
+This package contains the library needed to run programs dynamically
+linked with libjpeg.
+
 %package -n	%{devname}
-Summary:	Development tools for programs which will use the libjpeg-turbo library
+Summary:	Development tools for programs which will use the libjpeg library
 Group:		Development/C
 Requires:	%{libname} >= %{EVRD}
 Provides:	jpeg-devel = %{EVRD}
@@ -65,11 +78,11 @@ Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
 %description -n	%{devname}
 The libjpeg-turbo devel package includes the header files necessary for 
 developing programs which will manipulate JPEG files using the
-libjpeg-turbo library.
+libjpeg library.
 
 If you are going to develop programs which will manipulate JPEG images,
 you should install this package. You'll also need to have the
-libjpeg-turbo package installed.
+libjpeg package installed.
 
 %package -n	jpeg-progs
 Summary:	Programs for manipulating JPEG format image files
@@ -79,7 +92,7 @@ Group:		Graphics
 
 %description -n	jpeg-progs
 This package contains simple client programs for accessing the
-libjpeg-turbo functions.  The library client programs include cjpeg, djpeg,
+libjpeg functions.  The library client programs include cjpeg, djpeg,
 jpegtran, rdjpgcom, wrjpgcom and jpegexiforient, coupled with the script
 exifautotran. Cjpeg compresses an image file into JPEG format. Djpeg
 decompresses a JPEG file into a regular image file. Jpegtran can perform
@@ -130,7 +143,6 @@ make -C jpeg62 test
 make install-libLTLIBRARIES DESTDIR=%{buildroot} -C jpeg62
 %makeinstall_std -C jpeg8
 
-
 install -m755 jpegexiforient -D %{buildroot}%{_bindir}/jpegexiforient
 install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 
@@ -139,10 +151,6 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 # Fix perms
 chmod -x README-turbo.txt
-
-# Don't distribute libjpegturbo because it is unversioned
-rm -f %{buildroot}%{_includedir}/turbojpeg.h
-rm -f %{buildroot}%{_libdir}/libturbojpeg.{so,a}
 
 # cleanup
 rm -f %{buildroot}%{_libdir}/*.*a
@@ -156,9 +164,12 @@ rm -f %{buildroot}%{_docdir}/*
 %files -n %{libname62}
 %{_libdir}/libjpeg.so.%{major62}*
 
+%files -n %{turbo}
+%{_libdir}/libturbojpeg.so
+
 %files -n %{devname}
 %doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt filelist.txt
-%{_libdir}/*.so
+%{_libdir}/libjpeg.so
 %{_includedir}/*.h
 
 %files -n jpeg-progs
