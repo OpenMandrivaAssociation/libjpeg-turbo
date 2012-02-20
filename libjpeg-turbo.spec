@@ -35,9 +35,6 @@ processors which uses SIMD instructions (MMX, SSE2, etc.) to accelerate
 baseline JPEG compression and decompression. It is generally 2-4x as fast
 as the unmodified version of libjpeg, all else being equal.
 
-Install the libjpeg-turbo package if you need to manipulate JPEG files.
-You should also install the jpeg-progs package.
-
 %package -n	%{libname}
 Summary:	A library for manipulating JPEG image format files
 Group:		System/Libraries
@@ -52,7 +49,7 @@ Group:		System/Libraries
 
 %description -n %{libname62}
 This package contains the library needed to run programs dynamically
-linked with libjpeg-turbo.
+linked with libjpeg.
 
 %package -n	%{turbo}
 Summary:	TurboJPEG library
