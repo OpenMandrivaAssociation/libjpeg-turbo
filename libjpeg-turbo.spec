@@ -1,7 +1,7 @@
 %define	major	8
 %define	libname	%mklibname jpeg %{major}
 %define	devname	%mklibname -d jpeg
-%define	statname %mklibname -s -d jpeg
+%define	static	%mklibname -s -d jpeg
 %define	turbo	%mklibname turbojpeg
 
 %define	major62	62
@@ -12,7 +12,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Version:	1.2.1
-Release:	3
+Release:	4
 Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -102,7 +102,7 @@ If you are going to develop programs which will manipulate JPEG images,
 you should install this package. You'll also need to have the
 libjpeg package installed.
 
-%package -n	%{statname}
+%package -n	%{static}
 Summary:	Static libraries for programs which will use the libjpeg library
 Group:		Development/C
 Requires:	%{devname} = %{EVRD}
@@ -113,7 +113,7 @@ Conflicts:	jpeg6-static-devel
 Obsoletes:	%{mklibname jpeg 62 -d -s} < 6b-45
 Obsoletes:	%{mklibname jpeg 7 -d -s} < 7-3
  
-%description -n %{statname}
+%description -n %{static}
 The libjpeg static devel package includes the static libraries
 necessary for developing programs which will manipulate JPEG files using
 the libjpeg library.
@@ -151,12 +151,12 @@ cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
 %build
-CONFIGURE_TOP=$PWD
+CONFIGURE_TOP="$PWD"
 
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
-%configure2_5x	CC=%{uclibc_cc} \
+%uclibc_configure \
 		CFLAGS="%{uclibc_cflags} -ffast-math" \
 		--libdir=%{uclibc_root}%{_libdir} \
 		--disable-silent-rules \
@@ -169,9 +169,8 @@ popd
 
 mkdir -p jpeg8
 pushd jpeg8
-CFLAGS="%{optflags} -O3 -funroll-loops -ffast-math" \
-%configure2_5x	--disable-silent-rules \
-		--enable-shared \
+CFLAGS="%{optflags} -Ofast -funroll-loops" \
+%configure2_5x	--enable-shared \
 		--enable-static \
 		--with-jpeg8
 %make
@@ -179,9 +178,8 @@ popd
 
 mkdir -p jpeg62
 pushd jpeg62
-CFLAGS="%{optflags} -O3 -funroll-loops -ffast-math" \
-%configure2_5x	--disable-silent-rules \
-		--enable-shared \
+CFLAGS="%{optflags} -Ofast -funroll-loops" \
+%configure2_5x	--enable-shared \
 		--disable-static
 %make
 popd
@@ -210,7 +208,6 @@ install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 # cleanup
-rm -f %{buildroot}%{_libdir}/*.la
 rm -f %{buildroot}%{_docdir}/*
 
 %files -n %{libname}
@@ -239,7 +236,7 @@ rm -f %{buildroot}%{_docdir}/*
 %endif
 %{_includedir}/*.h
 
-%files -n %{statname}
+%files -n %{static}
 %{_libdir}/libjpeg.a
 %{_libdir}/libturbojpeg.a
 
