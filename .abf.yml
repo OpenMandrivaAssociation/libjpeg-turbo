@@ -1,4 +1,2 @@
 sources:
-  "exifautotran.txt:"	3086f24ccaa3e994ba40ec1d9a633a0aaa70e2be
-  "jpegexiforient.c:"	b28a27df7931da68285bd751f77712062f006e5a
-  "libjpeg-turbo-1.2.1.tar.gz:"	a4992e102c6d88146709e8e6ce5896d5d0b5a361
+  libjpeg-turbo-1.2.1.tar.gz: a4992e102c6d88146709e8e6ce5896d5d0b5a361
