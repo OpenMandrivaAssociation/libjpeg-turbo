@@ -88,8 +88,6 @@ Requires:	%{libname} >= %{EVRD}
 Requires:	uclibc-%{libname} >= %{EVRD}
 %endif
 Provides:	jpeg-devel = %{EVRD}
-Provides:	libjpeg-devel = %{EVRD}
-Provides:	jpeg%{major}-devel = %{EVRD}
 Conflicts:	jpeg6-devel
 Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
 
@@ -106,9 +104,7 @@ libjpeg package installed.
 Summary:	Static libraries for programs which will use the libjpeg library
 Group:		Development/C
 Requires:	%{devname} = %{EVRD}
-Provides:	libjpeg-static-devel = %{EVRD}
 Provides:	jpeg-static-devel = %{EVRD}
-Provides:	jpeg%{major}-static-devel = %{EVRD}
 Conflicts:	jpeg6-static-devel
 Obsoletes:	%{mklibname jpeg 62 -d -s} < 6b-45
 Obsoletes:	%{mklibname jpeg 7 -d -s} < 7-3
