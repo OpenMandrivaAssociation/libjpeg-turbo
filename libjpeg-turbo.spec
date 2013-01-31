@@ -12,7 +12,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Version:	1.2.1
-Release:	4
+Release:	5
 Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -158,8 +158,6 @@ mkdir -p uclibc
 pushd uclibc
 %uclibc_configure \
 		CFLAGS="%{uclibc_cflags} -ffast-math" \
-		--libdir=%{uclibc_root}%{_libdir} \
-		--disable-silent-rules \
 		--enable-shared \
 		--disable-static \
 		--with-jpeg8
