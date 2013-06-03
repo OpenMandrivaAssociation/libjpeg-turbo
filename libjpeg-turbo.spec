@@ -1,9 +1,9 @@
 %define	major	8
-%define	minor	0
+%define	majorturbo	0
 %define	libname	%mklibname jpeg %{major}
 %define	devname	%mklibname -d jpeg
 %define	static	%mklibname -s -d jpeg
-%define	turbo	%mklibname turbojpeg %{minor}
+%define	turbo	%mklibname turbojpeg %{majorturbo}
 
 %define	major62	62
 %define	libname62 %mklibname jpeg %{major62}
@@ -12,12 +12,12 @@
 
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
+Epoch:		1
 Version:	1.3.0
 Release:	5
-Epoch:		1
 License:	wxWidgets Library License
 Group:		System/Libraries
-URL:		http://sourceforge.net/projects/libjpeg-turbo
+Url:		http://sourceforge.net/projects/libjpeg-turbo
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 # These two allow automatic lossless rotation of JPEG images from a digital
 # camera which have orientation markings in the EXIF data. After rotation
@@ -26,7 +26,8 @@ Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
 Patch0:		jpeg-6b-c++fixes.patch
-BuildRequires:	autoconf automake libtool >= 1.4
+
+BuildRequires:	libtool >= 1.4
 %ifarch %{ix86} x86_64
 BuildRequires:	nasm
 %endif
@@ -97,10 +98,6 @@ The libjpeg-turbo devel package includes the header files necessary for
 developing programs which will manipulate JPEG files using the
 libjpeg library.
 
-If you are going to develop programs which will manipulate JPEG images,
-you should install this package. You'll also need to have the
-libjpeg package installed.
-
 %package -n	%{static}
 Summary:	Static libraries for programs which will use the libjpeg library
 Group:		Development/C
@@ -115,10 +112,6 @@ The libjpeg static devel package includes the static libraries
 necessary for developing programs which will manipulate JPEG files using
 the libjpeg library.
  
-If you are going to develop programs which will manipulate JPEG images,
-you should install this package.  You'll also need to have the
-libjpeg package installed.
-
 %package -n	jpeg-progs
 Summary:	Programs for manipulating JPEG format image files
 Group:		Graphics
@@ -154,10 +147,10 @@ CONFIGURE_TOP="$PWD"
 mkdir -p uclibc
 pushd uclibc
 %uclibc_configure \
-		CFLAGS="%{uclibc_cflags} -ffast-math" \
-		--enable-shared \
-		--disable-static \
-		--with-jpeg8
+	CFLAGS="%{uclibc_cflags} -ffast-math" \
+	--enable-shared \
+	--disable-static \
+	--with-jpeg8
 %make
 popd
 %endif
@@ -165,17 +158,19 @@ popd
 mkdir -p jpeg8
 pushd jpeg8
 CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure2_5x	--enable-shared \
-		--enable-static \
-		--with-jpeg8
+%configure2_5x \
+	--enable-shared \
+	--enable-static \
+	--with-jpeg8
 %make
 popd
 
 mkdir -p jpeg62
 pushd jpeg62
 CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure2_5x	--enable-shared \
-		--disable-static
+%configure2_5x \
+	--enable-shared \
+	--disable-static
 %make
 popd
 
@@ -213,14 +208,14 @@ rm -f %{buildroot}%{_docdir}/*
 %{_libdir}/libjpeg.so.%{major62}*
 
 %files -n %{turbo}
-%{_libdir}/libturbojpeg.so.%{minor}*
+%{_libdir}/libturbojpeg.so.%{majorturbo}*
 
 %if %{with uclibc}
 %files -n uclibc-%{libname}
 %{uclibc_root}%{_libdir}/libjpeg.so.%{major}*
 
 %files -n uclibc-%{turbo}
-%{uclibc_root}%{_libdir}/libturbojpeg.so.%{minor}*
+%{uclibc_root}%{_libdir}/libturbojpeg.so.%{majorturbo}*
 %endif
 
 %files -n %{devname}
@@ -241,3 +236,4 @@ rm -f %{buildroot}%{_docdir}/*
 %doc usage.txt wizard.txt
 %{_bindir}/*
 %{_mandir}/man1/*
+
