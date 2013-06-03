@@ -223,7 +223,7 @@ rm -f %{buildroot}%{_docdir}/*
 %endif
 
 %files -n %{devname}
-%doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt filelist.txt
+%doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt
 %{_libdir}/libjpeg.so
 %{_libdir}/libturbojpeg.so
 %if %{with uclibc}
