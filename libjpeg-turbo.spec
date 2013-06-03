@@ -178,7 +178,7 @@ CFLAGS="%{optflags} -Ofast -funroll-loops" \
 %make
 popd
 
-gcc %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
+%{__cc} %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
 
 %check
 make -C jpeg8 test
@@ -212,21 +212,23 @@ rm -f %{buildroot}%{_docdir}/*
 %{_libdir}/libjpeg.so.%{major62}*
 
 %files -n %{turbo}
-%{_libdir}/libturbojpeg.so
+%{_libdir}/libturbojpeg.so.*
 
 %if %{with uclibc}
 %files -n uclibc-%{libname}
 %{uclibc_root}%{_libdir}/libjpeg.so.%{major}*
 
 %files -n uclibc-%{turbo}
-%{uclibc_root}%{_libdir}/libturbojpeg.so
+%{uclibc_root}%{_libdir}/libturbojpeg.so.*
 %endif
 
 %files -n %{devname}
 %doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt filelist.txt
 %{_libdir}/libjpeg.so
+%{_libdir}/libturbojpeg.so
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libjpeg.so
+%{uclibc_root}%{_libdir}/libturbojpeg.so
 %endif
 %{_includedir}/*.h
 
