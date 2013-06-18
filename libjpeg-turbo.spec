@@ -14,7 +14,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	1.3.0
-Release:	5
+Release:	6
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		http://sourceforge.net/projects/libjpeg-turbo
@@ -85,12 +85,16 @@ linked with libturbojpeg.
 %package -n	%{devname}
 Summary:	Development tools for programs which will use the libjpeg library
 Group:		Development/C
-Requires:	%{libname} >= %{EVRD}
+Requires:	%{libname} = %{EVRD}
+Requires:	%{turbo} = %{EVRD}
 %if %{with uclibc}
-Requires:	uclibc-%{libname} >= %{EVRD}
+Requires:	uclibc-%{libname} = %{EVRD}
+Requires:	uclibc-%{turbo} = %{EVRD}
 %endif
 Provides:	jpeg-devel = %{EVRD}
 Conflicts:	jpeg6-devel
+Conflicts:	%{_lib}turbojpeg < 1:1.3.0
+Obsoletes:	%{_lib}turbojpeg < 1:1.3.0
 Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
 
 %description -n	%{devname}
@@ -174,7 +178,7 @@ CFLAGS="%{optflags} -Ofast -funroll-loops" \
 %make
 popd
 
-%{__cc} %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
+%__cc %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
 
 #%check
 #make -C jpeg8 test
