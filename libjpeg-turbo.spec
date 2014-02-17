@@ -14,7 +14,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	1.3.0
-Release:	10
+Release:	11
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		http://sourceforge.net/projects/libjpeg-turbo
@@ -143,6 +143,11 @@ chmod -x README-turbo.txt
 
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
+
+libtoolize --force
+aclocal
+automake -a
+autoconf
 
 %build
 CONFIGURE_TOP="$PWD"
