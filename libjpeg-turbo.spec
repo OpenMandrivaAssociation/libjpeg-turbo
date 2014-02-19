@@ -150,6 +150,12 @@ automake -a
 autoconf
 
 %build
+# fix me on RPM
+for i in $(find . -name config.guess -o -name config.sub) ; do
+           [ -f /usr/share/libtool/config/$(basename $i) ] && /bin/rm -f $i && /bin/cp -fv /usr/share/libtool/config//$(basename $i) $i ;
+done;
+# and remove me
+
 CONFIGURE_TOP="$PWD"
 
 %if %{with uclibc}
