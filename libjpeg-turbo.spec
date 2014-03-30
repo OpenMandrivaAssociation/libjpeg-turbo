@@ -13,8 +13,8 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	1.3.0
-Release:	11
+Version:	1.3.1
+Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		http://sourceforge.net/projects/libjpeg-turbo
@@ -26,8 +26,6 @@ Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
 Patch0:		jpeg-6b-c++fixes.patch
-Patch1:		libjpeg-turbo-CVE-2013-6629.patch
-Patch2:		libjpeg-turbo-CVE-2013-6630.patch
 
 
 BuildRequires:	libtool >= 1.4
@@ -141,8 +139,6 @@ have orientation markings in the EXIF data.
 %prep
 %setup -q
 %patch0 -p0
-%patch1 -p1
-%patch2 -p1
 # Fix perms
 chmod -x README-turbo.txt
 
