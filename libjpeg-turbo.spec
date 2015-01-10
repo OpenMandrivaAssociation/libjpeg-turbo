@@ -1,20 +1,20 @@
-%define	major	8
-%define	majorturbo	0
-%define	libname	%mklibname jpeg %{major}
-%define	devname	%mklibname -d jpeg
-%define	static	%mklibname -s -d jpeg
-%define	turbo	%mklibname turbojpeg %{majorturbo}
+%define major 8
+%define majorturbo 0
+%define libname %mklibname jpeg %{major}
+%define devname %mklibname -d jpeg
+%define static %mklibname -s -d jpeg
+%define turbo %mklibname turbojpeg %{majorturbo}
 
-%define	major62	62
-%define	libname62 %mklibname jpeg %{major62}
+%define major62 62
+%define libname62 %mklibname jpeg %{major62}
 
-%bcond_without	uclibc
+%bcond_without uclibc
 
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	1.3.1
-Release:	4
+Version:	1.4.0
+Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		http://sourceforge.net/projects/libjpeg-turbo
@@ -43,7 +43,7 @@ processors which uses SIMD instructions (MMX, SSE2, etc.) to accelerate
 baseline JPEG compression and decompression. It is generally 2-4x as fast
 as the unmodified version of libjpeg, all else being equal.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	A library for manipulating JPEG image format files
 Group:		System/Libraries
 
@@ -51,15 +51,17 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with libjpeg.
 
-%package -n	uclibc-%{libname}
+%if %{with uclibc}
+%package -n uclibc-%{libname}
 Summary:	A library for manipulating JPEG image format files (uClibc build)
 Group:		System/Libraries
 
 %description -n uclibc-%{libname}
 This package contains the library needed to run programs dynamically
 linked with libjpeg.
+%endif
 
-%package -n	%{libname62}
+%package -n %{libname62}
 Summary:	A library for manipulating JPEG image format files
 Group:		System/Libraries
 
@@ -67,7 +69,7 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with libjpeg.
 
-%package -n	%{turbo}
+%package -n %{turbo}
 Summary:	TurboJPEG library
 Group:		System/Libraries
 
@@ -75,23 +77,21 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with libturbojpeg.
 
-%package -n	uclibc-%{turbo}
+%if %{with uclibc}
+%package -n uclibc-%{turbo}
 Summary:	TurboJPEG library (uClibc build)
 Group:		System/Libraries
 
 %description -n uclibc-%{turbo}
 This package contains the library needed to run programs dynamically
 linked with libturbojpeg.
+%endif
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	Development tools for programs which will use the libjpeg library
 Group:		Development/C
 Requires:	%{libname} = %{EVRD}
 Requires:	%{turbo} = %{EVRD}
-%if %{with uclibc}
-Requires:	uclibc-%{libname} = %{EVRD}
-Requires:	uclibc-%{turbo} = %{EVRD}
-%endif
 Provides:	jpeg-devel = %{EVRD}
 Conflicts:	jpeg6-devel
 Conflicts:	%{_lib}turbojpeg < 1:1.3.0
@@ -103,7 +103,7 @@ The libjpeg-turbo devel package includes the header files necessary for
 developing programs which will manipulate JPEG files using the
 libjpeg library.
 
-%package -n	%{static}
+%package -n %{static}
 Summary:	Static libraries for programs which will use the libjpeg library
 Group:		Development/C
 Requires:	%{devname} = %{EVRD}
@@ -117,7 +117,7 @@ The libjpeg static devel package includes the static libraries
 necessary for developing programs which will manipulate JPEG files using
 the libjpeg library.
  
-%package -n	jpeg-progs
+%package -n jpeg-progs
 Summary:	Programs for manipulating JPEG format image files
 Group:		Graphics
 %rename		libjpeg-progs
@@ -174,7 +174,7 @@ popd
 mkdir -p jpeg8
 pushd jpeg8
 CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure2_5x \
+%configure \
 	--enable-shared \
 	--enable-static \
 	--with-jpeg8
@@ -184,7 +184,7 @@ popd
 mkdir -p jpeg62
 pushd jpeg62
 CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure2_5x \
+%configure \
 	--enable-shared \
 	--disable-static
 %make
@@ -252,4 +252,3 @@ rm -f %{buildroot}%{_docdir}/*
 %doc usage.txt wizard.txt
 %{_bindir}/*
 %{_mandir}/man1/*
-
