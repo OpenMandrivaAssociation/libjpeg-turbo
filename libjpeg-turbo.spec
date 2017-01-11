@@ -8,13 +8,11 @@
 %define major62 62
 %define libname62 %mklibname jpeg %{major62}
 
-%bcond_without uclibc
-
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	1.4.0
-Release:	4
+Release:	5
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		http://sourceforge.net/projects/libjpeg-turbo
@@ -33,9 +31,6 @@ BuildRequires:	libtool >= 1.4
 %ifarch %{ix86} x86_64
 BuildRequires:	nasm
 %endif
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-9
-%endif
 
 %description
 This package contains a library of functions for manipulating JPEG images.
@@ -52,16 +47,6 @@ Group:		System/Libraries
 This package contains the library needed to run programs dynamically
 linked with libjpeg.
 
-%if %{with uclibc}
-%package -n uclibc-%{libname}
-Summary:	A library for manipulating JPEG image format files (uClibc build)
-Group:		System/Libraries
-
-%description -n uclibc-%{libname}
-This package contains the library needed to run programs dynamically
-linked with libjpeg.
-%endif
-
 %package -n %{libname62}
 Summary:	A library for manipulating JPEG image format files
 Group:		System/Libraries
@@ -77,31 +62,6 @@ Group:		System/Libraries
 %description -n %{turbo}
 This package contains the library needed to run programs dynamically
 linked with libturbojpeg.
-
-%if %{with uclibc}
-%package -n uclibc-%{turbo}
-Summary:	TurboJPEG library (uClibc build)
-Group:		System/Libraries
-
-%description -n uclibc-%{turbo}
-This package contains the library needed to run programs dynamically
-linked with libturbojpeg.
-
-%package -n uclibc-%{devname}
-Summary:	Development tools for programs which will use the libjpeg library
-Group:		Development/C
-Requires:	uclibc-%{libname} = %{EVRD}
-Requires:	uclibc-%{turbo} = %{EVRD}
-Requires:	%{devname} = %{EVRD}
-Provides:	uclibc-jpeg-devel = %{EVRD}
-Provides:	uclibc-%{name}-devel = %{EVRD}
-Conflicts:	%{devname} < 1.4.0-2
-
-%description -n	uclibc-%{devname}
-The libjpeg-turbo devel package includes the header files necessary for 
-developing programs which will manipulate JPEG files using the
-libjpeg library.
-%endif
 
 %package -n %{devname}
 Summary:	Development tools for programs which will use the libjpeg library
@@ -175,18 +135,6 @@ done;
 
 CONFIGURE_TOP="$PWD"
 
-%if %{with uclibc}
-mkdir -p uclibc
-pushd uclibc
-%uclibc_configure \
-	CFLAGS="%{uclibc_cflags} -ffast-math" \
-	--enable-shared \
-	--disable-static \
-	--with-jpeg8
-%make
-popd
-%endif
-
 mkdir -p jpeg8
 pushd jpeg8
 CFLAGS="%{optflags} -Ofast -funroll-loops" \
@@ -211,14 +159,8 @@ popd
 #%check
 #make -C jpeg8 test
 #make -C jpeg62 test
-#%if %{with uclibc}
-#make -C uclibc test
-#%endif
 
 %install
-%if %{with uclibc}
-make install-libLTLIBRARIES DESTDIR=%{buildroot} -C uclibc
-%endif
 
 make install-libLTLIBRARIES DESTDIR=%{buildroot} -C jpeg62
 %makeinstall_std -C jpeg8
@@ -241,18 +183,6 @@ rm -f %{buildroot}%{_docdir}/*
 
 %files -n %{turbo}
 %{_libdir}/libturbojpeg.so.%{majorturbo}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libname}
-%{uclibc_root}%{_libdir}/libjpeg.so.%{major}*
-
-%files -n uclibc-%{turbo}
-%{uclibc_root}%{_libdir}/libturbojpeg.so.%{majorturbo}*
-
-%files -n uclibc-%{devname}
-%{uclibc_root}%{_libdir}/libjpeg.so
-%{uclibc_root}%{_libdir}/libturbojpeg.so
-%endif
 
 %files -n %{devname}
 %doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt
