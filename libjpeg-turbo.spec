@@ -190,7 +190,7 @@ buildit() {
 	LD_LIBRARY_PATH="$(pwd)/build" ./build/cjpeg -progressive testimage.pnm >testimage.jpg
 	rm -f testimage.pnm testimage.jpg
     done
-    LD_LIBRARY_PATH="$(pwd)/build" ./build/tjbench testimages/testimgint.jpg
+    LD_LIBRARY_PATH="$(pwd)/build" ./build/tjbench ../../testimages/testimgint.jpg
     llvm-profdata merge --output=code.profclangd *.profclangr
     PROFDATA="$(realpath code.profclangd)"
     cd ..
