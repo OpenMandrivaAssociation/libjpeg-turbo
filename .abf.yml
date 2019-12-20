@@ -1,6 +1,2 @@
-removed_sources:
-  libjpeg-turbo-1.2.1.tar.gz: a4992e102c6d88146709e8e6ce5896d5d0b5a361
-  libjpeg-turbo-1.3.0.tar.gz: 1792c964b35604cebd3a8846f1ca6de5976e9c28
-  libjpeg-turbo-1.3.1.tar.gz: 5fa19252e5ca992cfa40446a0210ceff55fbe468
 sources:
-  libjpeg-turbo-1.4.0.tar.gz: a9ed7a99a6090e0848836c5df8e836f300a098b9
+  libjpeg-turbo-2.0.3.tar.gz: 539363a444f92421c098a1a3e7cebfda48d4cfb3

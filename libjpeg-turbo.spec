@@ -8,14 +8,25 @@
 %define major62 62
 %define libname62 %mklibname jpeg %{major62}
 
+%global optflags %{optflags} -Ofast -funroll-loops
+
+%bcond_without java
+%ifarch %{riscv}
+%bcond_with pgo
+%else
+# Disable PGO when not using clang and/or when
+# bootstrapping (avoids a few dependencies)
+%bcond_without pgo
+%endif
+
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	1.4.0
-Release:	5
+Version:	2.0.3
+Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
-Url:		http://sourceforge.net/projects/libjpeg-turbo
+Url:		https://libjpeg-turbo.org/
 Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
 Source1:	%{name}.rpmlintrc
 # These two allow automatic lossless rotation of JPEG images from a digital
@@ -25,11 +36,35 @@ Source1:	%{name}.rpmlintrc
 Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
 Patch0:		jpeg-6b-c++fixes.patch
-
-
-BuildRequires:	libtool >= 1.4
-%ifarch %{ix86} x86_64
+BuildRequires:	cmake
+BuildRequires:	ninja
 BuildRequires:	nasm
+%if %{with java}
+BuildRequires:	java-devel
+%endif
+%if %{with pgo}
+# Pull in some JPEG files so we can generate PGO data
+BuildRequires:	desktop-common-data
+BuildRequires:	breeze
+BuildRequires:	distro-theme-common
+BuildRequires:	plasma-workspace-wallpapers-autumn
+BuildRequires:	plasma-workspace-wallpapers-bythewater
+BuildRequires:	plasma-workspace-wallpapers-canopee
+BuildRequires:	plasma-workspace-wallpapers-cascade
+BuildRequires:	plasma-workspace-wallpapers-coldripple
+BuildRequires:	plasma-workspace-wallpapers-colorfulcups
+BuildRequires:	plasma-workspace-wallpapers-darkesthour
+BuildRequires:	plasma-workspace-wallpapers-eveningglow
+BuildRequires:	plasma-workspace-wallpapers-fallenleaf
+BuildRequires:	plasma-workspace-wallpapers-flyingkonqui
+BuildRequires:	plasma-workspace-wallpapers-grey
+BuildRequires:	plasma-workspace-wallpapers-kite
+BuildRequires:	plasma-workspace-wallpapers-kokkini
+BuildRequires:	plasma-workspace-wallpapers-onestandsout
+BuildRequires:	plasma-workspace-wallpapers-opal
+BuildRequires:	plasma-workspace-wallpapers-pastelhills
+BuildRequires:	plasma-workspace-wallpapers-path
+BuildRequires:	plasma-workspace-wallpapers-summer_1am
 %endif
 
 %description
@@ -74,7 +109,7 @@ Conflicts:	%{_lib}turbojpeg < 1:1.3.0
 Obsoletes:	%{_lib}turbojpeg < 1:1.3.0
 Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
 
-%description -n	%{devname}
+%description -n %{devname}
 The libjpeg-turbo devel package includes the header files necessary for 
 developing programs which will manipulate JPEG files using the
 libjpeg library.
@@ -87,19 +122,19 @@ Provides:	jpeg-static-devel = %{EVRD}
 Conflicts:	jpeg6-static-devel
 Obsoletes:	%{mklibname jpeg 62 -d -s} < 6b-45
 Obsoletes:	%{mklibname jpeg 7 -d -s} < 7-3
- 
+
 %description -n %{static}
 The libjpeg static devel package includes the static libraries
 necessary for developing programs which will manipulate JPEG files using
 the libjpeg library.
- 
+
 %package -n jpeg-progs
 Summary:	Programs for manipulating JPEG format image files
 Group:		Graphics
 %rename		libjpeg-progs
 %rename		jpeg6-progs
 
-%description -n	jpeg-progs
+%description -n jpeg-progs
 This package contains simple client programs for accessing the
 libjpeg functions.  The library client programs include cjpeg, djpeg,
 jpegtran, rdjpgcom, wrjpgcom and jpegexiforient, coupled with the script
@@ -112,58 +147,91 @@ Wrjpgcom inserts text comments into a JPEG file. Jpegexiforient allow
 automatic lossless rotation of JPEG images from a digital camera which
 have orientation markings in the EXIF data.
 
-%prep
-%setup -q
-%patch0 -p0
-# Fix perms
-chmod -x README-turbo.txt
+%if %{with java}
+%package -n java-turbojpeg
+Summary: Java bindings to the turbojpeg library
+Requires: %{turbo} = %{EVRD}
+Group: Development/Java
 
+%description -n java-turbojpeg
+Java bindings to the turbojpeg library
+%endif
+
+%prep
+%autosetup -p1
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
-libtoolize --force
-aclocal
-automake -a
-autoconf
+buildit() {
+    NAME="$1"
+    shift
 
-%build
-# fix me on RPM
-for i in $(find . -name config.guess -o -name config.sub) ; do
-           [ -f /usr/share/libtool/config/$(basename $i) ] && /bin/rm -f $i && /bin/cp -fv /usr/share/libtool/config//$(basename $i) $i ;
-done;
-# and remove me
+%if %{with pgo}
+    export LLVM_PROFILE_FILE=code-%p.profclangr
+    mkdir -p "$NAME-pgo"
+    cd "$NAME-pgo"
+    CFLAGS="%{optflags} -fprofile-instr-generate" \
+    CXXFLAGS="%{optflags} -fprofile-instr-generate" \
+    LDFLAGS="%{ldflags} -fprofile-instr-generate" \
+    %cmake "$@" \
+	-G Ninja \
+	../..
+    %ninja_build
+    cd ..
+    find /usr/share/wallpapers -iname "*.jpg" |while read r; do
+	# default."jpg" is actually a symlink to default.png, let's not freak out...
+	echo $r |grep -q default.jpg && continue
+	LD_LIBRARY_PATH="`pwd`/build" ./build/djpeg -dct int $r >testimage.pnm
+	LD_LIBRARY_PATH="`pwd`/build" ./build/djpeg -dct fast $r >testimage.pnm
+	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg testimage.pnm >testimage.jpg
+	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg -optimize testimage.pnm >testimage.jpg
+	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg -progressive testimage.pnm >testimage.jpg
+	rm -f testimage.pnm testimage.jpg
+    done
+    llvm-profdata merge --output=code.profclangd *.profclangr
+    PROFDATA="$(realpath code.profclangd)"
+    cd ..
+%endif
 
-CONFIGURE_TOP="$PWD"
+    mkdir -p "$NAME"
+    cd "$NAME"
+%if %{with pgo}
+    CFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
+    CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
+    LDFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
+%endif
+    %cmake "$@" \
+	-G Ninja \
+	../..
+    %ninja_build
+    cd ../..
+}
 
-mkdir -p jpeg8
-pushd jpeg8
-CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure \
-	--enable-shared \
-	--enable-static \
-	--with-jpeg8
-%make
-popd
+buildit jpeg8 \
+%if %{with java}
+    -DWITH_JAVA:BOOL=ON \
+%endif
+    -DWITH_JPEG7:BOOL=ON \
+    -DWITH_JPEG8:BOOL=ON
 
-mkdir -p jpeg62
-pushd jpeg62
-CFLAGS="%{optflags} -Ofast -funroll-loops" \
-%configure \
-	--enable-shared \
-	--disable-static
-%make
-popd
+buildit jpeg62 \
+    -DWITH_JPEG7:BOOL=OFF \
+    -DWITH_JPEG8:BOOL=OFF
 
-%__cc %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
+%{__cc} %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
 
 #%check
 #make -C jpeg8 test
 #make -C jpeg62 test
 
 %install
+cd jpeg62
+%ninja_install -C build
 
-make install-libLTLIBRARIES DESTDIR=%{buildroot} -C jpeg62
-%makeinstall_std -C jpeg8
+cd ../jpeg8
+%ninja_install -C build
+cd ..
+
 
 install -m755 jpegexiforient -D %{buildroot}%{_bindir}/jpegexiforient
 install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
@@ -171,11 +239,7 @@ install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 #(neoclust) Provide jpegint.h because it is needed by certain software
 install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
-# cleanup
-rm -f %{buildroot}%{_docdir}/*
-
 %files -n %{libname}
-%doc change.log ChangeLog.txt README README-turbo.txt
 %{_libdir}/libjpeg.so.%{major}*
 
 %files -n %{libname62}
@@ -198,3 +262,8 @@ rm -f %{buildroot}%{_docdir}/*
 %doc usage.txt wizard.txt
 %{_bindir}/*
 %{_mandir}/man1/*
+
+%if %{with java}
+%files -n java-turbojpeg
+%{_datadir}/java/turbojpeg.jar
+%endif
