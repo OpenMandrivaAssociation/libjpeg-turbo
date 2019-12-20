@@ -39,7 +39,7 @@ BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	nasm
 %if %{with java}
-BuildRequires:	java-devel
+BuildRequires:	jdk-current java-gui-current
 %endif
 %if %{with pgo}
 # Pull in some JPEG files so we can generate PGO data
@@ -160,6 +160,8 @@ Java bindings to the turbojpeg library
 %autosetup -p1
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
+
+. %{_sysconfdir}/profile.d/90java.sh
 
 buildit() {
     NAME="$1"
