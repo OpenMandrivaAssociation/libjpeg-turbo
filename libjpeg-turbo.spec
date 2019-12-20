@@ -35,7 +35,6 @@ Source1:	%{name}.rpmlintrc
 # applying these programs again.
 Source2:	http://jpegclub.org/jpegexiforient.c
 Source3:	http://jpegclub.org/exifautotran.txt
-Patch0:		jpeg-6b-c++fixes.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	nasm
