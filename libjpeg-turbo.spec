@@ -252,8 +252,10 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 %files -n %{devname}
 %doc coderules.txt jconfig.txt libjpeg.txt structure.txt usage.txt wizard.txt
+%doc %{_docdir}/%{name}
 %{_libdir}/libjpeg.so
 %{_libdir}/libturbojpeg.so
+%{_libdir}/pkgconfig/*.pc
 %{_includedir}/*.h
 
 %files -n %{static}
