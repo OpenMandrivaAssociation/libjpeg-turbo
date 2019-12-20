@@ -40,6 +40,7 @@ BuildRequires:	ninja
 BuildRequires:	nasm
 %if %{with java}
 BuildRequires:	java-devel
+BuildRequires:	java-gui-current
 %endif
 %if %{with pgo}
 # Pull in some JPEG files so we can generate PGO data
@@ -180,13 +181,14 @@ buildit() {
     find /usr/share/wallpapers -iname "*.jpg" |while read r; do
 	# default."jpg" is actually a symlink to default.png, let's not freak out...
 	echo $r |grep -q default.jpg && continue
-	LD_LIBRARY_PATH="`pwd`/build" ./build/djpeg -dct int $r >testimage.pnm
-	LD_LIBRARY_PATH="`pwd`/build" ./build/djpeg -dct fast $r >testimage.pnm
-	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg testimage.pnm >testimage.jpg
-	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg -optimize testimage.pnm >testimage.jpg
-	LD_LIBRARY_PATH="`pwd`/build" ./build/cjpeg -progressive testimage.pnm >testimage.jpg
+	LD_LIBRARY_PATH="$(pwd)/build" ./build/djpeg -dct int $r >testimage.pnm
+	LD_LIBRARY_PATH="$(pwd)/build" ./build/djpeg -dct fast $r >testimage.pnm
+	LD_LIBRARY_PATH="$(pwd)/build" ./build/cjpeg testimage.pnm >testimage.jpg
+	LD_LIBRARY_PATH="$(pwd)/build" ./build/cjpeg -optimize testimage.pnm >testimage.jpg
+	LD_LIBRARY_PATH="$(pwd)/build" ./build/cjpeg -progressive testimage.pnm >testimage.jpg
 	rm -f testimage.pnm testimage.jpg
     done
+    LD_LIBRARY_PATH="$(pwd)/build" ./build/tjbench testimages/testimgint.jpg
     llvm-profdata merge --output=code.profclangd *.profclangr
     PROFDATA="$(realpath code.profclangd)"
     cd ..
