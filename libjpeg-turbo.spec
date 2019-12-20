@@ -39,7 +39,7 @@ BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	nasm
 %if %{with java}
-BuildRequires:	java-devel
+BuildRequires:	jdk-current
 BuildRequires:	java-gui-current
 %endif
 %if %{with pgo}
@@ -162,6 +162,8 @@ Java bindings to the turbojpeg library
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
+. %{_sysconfdir}/profile.d/90java.sh
+
 buildit() {
     NAME="$1"
     shift
@@ -233,7 +235,6 @@ cd ../jpeg8
 %ninja_install -C build
 cd ..
 
-
 install -m755 jpegexiforient -D %{buildroot}%{_bindir}/jpegexiforient
 install -m755 exifautotran -D %{buildroot}%{_bindir}/exifautotran
 
@@ -250,7 +251,7 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %{_libdir}/libturbojpeg.so.%{majorturbo}*
 
 %files -n %{devname}
-%doc coderules.txt example.c jconfig.txt libjpeg.txt structure.txt
+%doc coderules.txt jconfig.txt libjpeg.txt structure.txt usage.txt wizard.txt
 %{_libdir}/libjpeg.so
 %{_libdir}/libturbojpeg.so
 %{_includedir}/*.h
@@ -260,7 +261,6 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %{_libdir}/libturbojpeg.a
 
 %files -n jpeg-progs
-%doc usage.txt wizard.txt
 %{_bindir}/*
 %{_mandir}/man1/*
 
