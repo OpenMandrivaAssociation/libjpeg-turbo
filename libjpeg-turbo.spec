@@ -163,7 +163,9 @@ Java bindings to the turbojpeg library
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
+%if %{with java}
 . %{_sysconfdir}/profile.d/90java.sh
+%endif
 
 buildit() {
     NAME="$1"
