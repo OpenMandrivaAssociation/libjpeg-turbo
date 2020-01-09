@@ -13,6 +13,7 @@
 %bcond_without java
 %ifarch %{riscv}
 %bcond_with pgo
+%bcond_with java
 %else
 # Disable PGO when not using clang and/or when
 # bootstrapping (avoids a few dependencies)
