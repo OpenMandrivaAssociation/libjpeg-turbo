@@ -10,7 +10,6 @@
 
 %global optflags %{optflags} -Ofast -funroll-loops
 
-%bcond_without java
 %ifarch %{riscv}
 %bcond_with pgo
 %bcond_with java
@@ -18,6 +17,7 @@
 # Disable PGO when not using clang and/or when
 # bootstrapping (avoids a few dependencies)
 %bcond_without pgo
+%bcond_without java
 %endif
 
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
