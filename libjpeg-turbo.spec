@@ -10,6 +10,17 @@
 
 %global optflags %{optflags} -Ofast -funroll-loops
 
+# libjpeg-turbo is used by wine
+%ifarch %{x86_64}
+%bcond_without compat32
+%else
+%bcond_with compat32
+%endif
+%define lib32name libjpeg%{major}
+%define dev32name libjpeg-devel
+%define turbo32 libturbojpeg%{majorturbo}
+%define static32 libjpeg-static-devel
+
 %ifarch %{riscv}
 %bcond_with pgo
 %bcond_with java
@@ -24,7 +35,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	2.0.4
-Release:	2
+Release:	3
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
@@ -112,7 +123,7 @@ Obsoletes:	%{mklibname jpeg -d} < %{EVRD}
 Obsoletes:	%{mklibname jpeg 62 -d} < 6b-45
 
 %description -n %{devname}
-The libjpeg-turbo devel package includes the header files necessary for 
+The libjpeg-turbo devel package includes the header files necessary for
 developing programs which will manipulate JPEG files using the
 libjpeg library.
 
@@ -160,6 +171,46 @@ Group: Development/Java
 Java bindings to the turbojpeg library
 %endif
 
+%if %{with compat32}
+%package -n %{lib32name}
+Summary:	A library for manipulating JPEG image format files (32-bit)
+Group:		System/Libraries
+
+%description -n %{lib32name}
+This package contains the library needed to run programs dynamically
+linked with libjpeg.
+
+%package -n %{turbo32}
+Summary:	TurboJPEG library (32-bit)
+Group:		System/Libraries
+
+%description -n %{turbo32}
+This package contains the library needed to run programs dynamically
+linked with libturbojpeg.
+
+%package -n %{dev32name}
+Summary:	Development tools for programs which will use the libjpeg library (32-bit)
+Group:		Development/C
+Requires:	%{devname} = %{EVRD}
+Requires:	%{lib32name} = %{EVRD}
+Requires:	%{turbo32} = %{EVRD}
+
+%description -n %{dev32name}
+The libjpeg-turbo devel package includes the header files necessary for
+developing programs which will manipulate JPEG files using the
+libjpeg library.
+
+%package -n %{static32}
+Summary:	Static libraries for programs which will use the libjpeg library (32-bit)
+Group:		Development/C
+Requires:	%{dev32name} = %{EVRD}
+
+%description -n %{static32}
+The libjpeg static devel package includes the static libraries
+necessary for developing programs which will manipulate JPEG files using
+the libjpeg library.
+%endif
+
 %prep
 %autosetup -p1
 cp %{SOURCE2} jpegexiforient.c
@@ -167,6 +218,18 @@ cp %{SOURCE3} exifautotran
 
 %if %{with java}
 . %{_sysconfdir}/profile.d/90java.sh
+%endif
+
+%if %{with compat32}
+export CFLAGS="%(echo %{optflags} | sed -e 's,-m64,,g') -m32"
+export LDFLAGS="%(echo %{ldflags} | sed -e 's,-m64,,g') -m32"
+%cmake32 -G Ninja \
+	-DWITH_JAVA:BOOL=OFF \
+	-DWITH_JPEG7:BOOL=ON \
+	-DWITH_JPEG8:BOOL=ON
+unset CFLAGS
+unset LDFLAGS
+cd ..
 %endif
 
 buildit() {
@@ -233,6 +296,10 @@ buildit jpeg62 \
 #make -C jpeg62 test
 
 %install
+%if %{with compat32}
+%ninja_install -C build32
+%endif
+
 cd jpeg62
 %ninja_install -C build
 
@@ -274,4 +341,22 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %if %{with java}
 %files -n java-turbojpeg
 %{_datadir}/java/turbojpeg.jar
+%endif
+
+%if %{with compat32}
+%files -n %{lib32name}
+%{_prefix}/lib/libjpeg.so.%{major}*
+
+%files -n %{turbo32}
+%{_prefix}/lib/libturbojpeg.so.%{majorturbo}*
+
+%files -n %{dev32name}
+%{_prefix}/lib/libjpeg.so
+%{_prefix}/lib/libturbojpeg.so
+%{_prefix}/lib/pkgconfig/*.pc
+%{_includedir}/*.h
+
+%files -n %{static32}
+%{_prefix}/lib/libjpeg.a
+%{_prefix}/lib/libturbojpeg.a
 %endif
