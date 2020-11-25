@@ -329,6 +329,7 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %{_libdir}/libturbojpeg.so
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/*.h
+%{_libdir}/cmake/%{name}/*.cmake
 
 %files -n %{static}
 %{_libdir}/libjpeg.a
@@ -355,6 +356,7 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %{_prefix}/lib/libturbojpeg.so
 %{_prefix}/lib/pkgconfig/*.pc
 %{_includedir}/*.h
+%{_prefix}/lib/cmake/%{name}/*.cmake
 
 %files -n %{static32}
 %{_prefix}/lib/libjpeg.a
