@@ -1,3 +1,6 @@
+# (tpg) reduce bloat by excluding cmake requires on devel packages
+%global __requires_exclude ^cmake.*$
+
 %define major 8
 %define majorturbo 0
 %define libname %mklibname jpeg %{major}
@@ -35,7 +38,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	2.0.90
-Release:	1
+Release:	2
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
