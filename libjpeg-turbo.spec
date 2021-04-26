@@ -37,8 +37,8 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	2.0.90
-Release:	2
+Version:	2.1.0
+Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
@@ -61,7 +61,7 @@ BuildRequires:	java-gui-current
 # Pull in some JPEG files so we can generate PGO data
 BuildRequires:	desktop-common-data
 BuildRequires:	breeze
-BuildRequires:	distro-theme-common
+BuildRequires:	distro-release-theme
 BuildRequires:	plasma-workspace-wallpapers-autumn
 BuildRequires:	plasma-workspace-wallpapers-bythewater
 BuildRequires:	plasma-workspace-wallpapers-canopee
