@@ -11,7 +11,7 @@
 %define major62 62
 %define libname62 %mklibname jpeg %{major62}
 
-%global optflags %{optflags} -Ofast -funroll-loops
+%global optflags %{optflags} -O3
 
 # libjpeg-turbo is used by wine
 %ifarch %{x86_64}
@@ -38,7 +38,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	2.1.0
-Release:	1
+Release:	2
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
