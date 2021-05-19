@@ -1,3 +1,6 @@
+# (tpg) workaround for debuginfo generation
+%define _unpackaged_files_terminate_build 0
+
 # (tpg) reduce bloat by excluding cmake requires on devel packages
 %global __requires_exclude ^cmake.*$
 
