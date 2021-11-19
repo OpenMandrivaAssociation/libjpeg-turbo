@@ -40,7 +40,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	2.1.1
+Version:	2.1.2
 Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -343,7 +343,7 @@ install -m644 jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 
 %files -n jpeg-progs
 %{_bindir}/*
-%{_mandir}/man1/*
+%doc %{_mandir}/man1/*
 
 %if %{with java}
 %files -n java-turbojpeg
