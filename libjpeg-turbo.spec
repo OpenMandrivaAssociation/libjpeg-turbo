@@ -33,7 +33,7 @@
 %else
 # Disable PGO when not using clang and/or when
 # bootstrapping (avoids a few dependencies)
-%bcond_with pgo
+%bcond_without pgo
 %bcond_without java
 %endif
 
@@ -41,7 +41,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	2.1.2
-Release:	1
+Release:	2
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
@@ -169,12 +169,12 @@ have orientation markings in the EXIF data.
 
 %if %{with java}
 %package -n java-turbojpeg
-Summary: Java bindings to the turbojpeg library
-Requires: %{turbo} = %{EVRD}
-Group: Development/Java
+Summary:	Java bindings to the turbojpeg library
+Requires:	%{turbo} = %{EVRD}
+Group:		Development/Java
 
 %description -n java-turbojpeg
-Java bindings to the turbojpeg library
+Java bindings to the turbojpeg library.
 %endif
 
 %if %{with compat32}
@@ -243,12 +243,11 @@ buildit() {
     shift
 
 %if %{with pgo}
-    export LLVM_PROFILE_FILE=code-%p.profclangr
     mkdir -p "$NAME-pgo"
     cd "$NAME-pgo"
-    CFLAGS="%{optflags} -fprofile-instr-generate" \
-    CXXFLAGS="%{optflags} -fprofile-instr-generate" \
-    LDFLAGS="%{ldflags} -fprofile-instr-generate" \
+    CFLAGS="%{optflags} -fprofile-generate" \
+    CXXFLAGS="%{optflags} -fprofile-generate" \
+    LDFLAGS="%{build_ldflags} -fprofile-generate" \
     %cmake "$@" \
 	-G Ninja \
 	../..
@@ -265,17 +264,18 @@ buildit() {
 	rm -f testimage.pnm testimage.jpg
     done
     LD_LIBRARY_PATH="$(pwd)/build" ./build/tjbench ../testimages/testimgint.jpg
-    llvm-profdata merge --output=code.profclangd *.profclangr
-    PROFDATA="$(realpath code.profclangd)"
+    llvm-profdata merge --output=%{name}-llvm.profdata *.profraw
+    PROFDATA="$(realpath %{name}-llvm.profdata)"
+    rm -rf *.profraw
     cd ..
 %endif
 
     mkdir -p "$NAME"
     cd "$NAME"
 %if %{with pgo}
-    CFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
-    CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
-    LDFLAGS="%{optflags} -fprofile-instr-use=$(realpath $PROFDATA)" \
+    CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+    CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+    LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
     %cmake "$@" \
 	-G Ninja \
@@ -295,7 +295,7 @@ buildit jpeg62 \
     -DWITH_JPEG7:BOOL=OFF \
     -DWITH_JPEG8:BOOL=OFF
 
-%{__cc} %{optflags} %{ldflags} -o jpegexiforient jpegexiforient.c
+%{__cc} %{optflags} %{build_ldflags} -o jpegexiforient jpegexiforient.c
 
 #%check
 #make -C jpeg8 test
