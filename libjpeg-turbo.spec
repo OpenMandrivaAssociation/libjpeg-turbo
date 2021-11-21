@@ -41,7 +41,7 @@ Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
 Version:	2.1.2
-Release:	2
+Release:	3
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
@@ -245,6 +245,13 @@ buildit() {
 %if %{with pgo}
     mkdir -p "$NAME-pgo"
     cd "$NAME-pgo"
+# (tpg) 2021-11-21
+# LLVM Profile Warning: Unable to track new values:
+# Running out of static counters.
+# Consider using option -mllvm -vp-counters-per-site=<n> to allocate more value profile counters at compile time.
+%global __cc %{__cc} -mllvm -vp-counters-per-site=4
+%global __cxx %{__cxx} -mllvm -vp-counters-per-site=4
+
     CFLAGS="%{optflags} -fprofile-generate" \
     CXXFLAGS="%{optflags} -fprofile-generate" \
     LDFLAGS="%{build_ldflags} -fprofile-generate" \
@@ -263,6 +270,7 @@ buildit() {
 	LD_LIBRARY_PATH="$(pwd)/build" ./build/cjpeg -progressive testimage.pnm >testimage.jpg
 	rm -f testimage.pnm testimage.jpg
     done
+    exit 1
     LD_LIBRARY_PATH="$(pwd)/build" ./build/tjbench ../testimages/testimgint.jpg
     llvm-profdata merge --output=%{name}-llvm.profdata *.profraw
     PROFDATA="$(realpath %{name}-llvm.profdata)"
