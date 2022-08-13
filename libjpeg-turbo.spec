@@ -84,6 +84,9 @@ BuildRequires:	plasma-workspace-wallpapers-pastelhills
 BuildRequires:	plasma-workspace-wallpapers-path
 BuildRequires:	plasma-workspace-wallpapers-summer_1am
 %endif
+%if %{with compat32}
+BuildRequires:	libc6
+%endif
 
 %description
 This package contains a library of functions for manipulating JPEG images.
