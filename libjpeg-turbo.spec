@@ -40,7 +40,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	2.1.5
+Version:	2.1.5.1
 Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -231,7 +231,7 @@ cp %{SOURCE3} exifautotran
 
 %if %{with compat32}
 export CFLAGS="%(echo %{optflags} | sed -e 's,-m64,,g') -m32"
-export LDFLAGS="%(echo %{ldflags} | sed -e 's,-m64,,g') -m32"
+export LDFLAGS="%(echo %{build_ldflags} | sed -e 's,-m64,,g') -m32"
 %cmake32 -G Ninja \
 	-DWITH_JAVA:BOOL=OFF \
 	-DWITH_JPEG7:BOOL=ON \
