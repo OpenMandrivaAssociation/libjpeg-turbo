@@ -40,12 +40,12 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	3.0.1
+Version:	3.0.2
 Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
 Url:		https://libjpeg-turbo.org/
-Source0:	http://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.gz
+Source0:	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/%{version}/libjpeg-turbo-%{version}.tar.gz
 Source1:	%{name}.rpmlintrc
 # These two allow automatic lossless rotation of JPEG images from a digital
 # camera which have orientation markings in the EXIF data. After rotation
