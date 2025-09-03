@@ -40,7 +40,7 @@
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
 Epoch:		1
-Version:	3.1.1
+Version:	3.1.2
 Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
@@ -63,26 +63,26 @@ BuildRequires:	java-gui-current
 %if %{with pgo}
 # Pull in some JPEG files so we can generate PGO data
 BuildRequires:	desktop-common-data
-BuildRequires:	plasma6-breeze
+BuildRequires:	breeze
 BuildRequires:	distro-release-theme
-BuildRequires:	plasma6-workspace-wallpapers-autumn
-BuildRequires:	plasma6-workspace-wallpapers-bythewater
-BuildRequires:	plasma6-workspace-wallpapers-canopee
-BuildRequires:	plasma6-workspace-wallpapers-cascade
-BuildRequires:	plasma6-workspace-wallpapers-coldripple
-BuildRequires:	plasma6-workspace-wallpapers-colorfulcups
-BuildRequires:	plasma6-workspace-wallpapers-darkesthour
-BuildRequires:	plasma6-workspace-wallpapers-eveningglow
-BuildRequires:	plasma6-workspace-wallpapers-fallenleaf
-BuildRequires:	plasma6-workspace-wallpapers-flyingkonqui
-BuildRequires:	plasma6-workspace-wallpapers-grey
-BuildRequires:	plasma6-workspace-wallpapers-kite
-BuildRequires:	plasma6-workspace-wallpapers-kokkini
-BuildRequires:	plasma6-workspace-wallpapers-onestandsout
-BuildRequires:	plasma6-workspace-wallpapers-opal
-BuildRequires:	plasma6-workspace-wallpapers-pastelhills
-BuildRequires:	plasma6-workspace-wallpapers-path
-BuildRequires:	plasma6-workspace-wallpapers-summer_1am
+BuildRequires:	plasma-workspace-wallpapers-autumn
+BuildRequires:	plasma-workspace-wallpapers-bythewater
+BuildRequires:	plasma-workspace-wallpapers-canopee
+BuildRequires:	plasma-workspace-wallpapers-cascade
+BuildRequires:	plasma-workspace-wallpapers-coldripple
+BuildRequires:	plasma-workspace-wallpapers-colorfulcups
+BuildRequires:	plasma-workspace-wallpapers-darkesthour
+BuildRequires:	plasma-workspace-wallpapers-eveningglow
+BuildRequires:	plasma-workspace-wallpapers-fallenleaf
+BuildRequires:	plasma-workspace-wallpapers-flyingkonqui
+BuildRequires:	plasma-workspace-wallpapers-grey
+BuildRequires:	plasma-workspace-wallpapers-kite
+BuildRequires:	plasma-workspace-wallpapers-kokkini
+BuildRequires:	plasma-workspace-wallpapers-onestandsout
+BuildRequires:	plasma-workspace-wallpapers-opal
+BuildRequires:	plasma-workspace-wallpapers-pastelhills
+BuildRequires:	plasma-workspace-wallpapers-path
+BuildRequires:	plasma-workspace-wallpapers-summer_1am
 %endif
 %if %{with compat32}
 BuildRequires:	libc6
