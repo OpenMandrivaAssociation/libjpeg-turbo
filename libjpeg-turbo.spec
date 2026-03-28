@@ -39,8 +39,7 @@
 
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
 Name:		libjpeg-turbo
-Epoch:		1
-Version:	3.1.4
+Version:	3.1.4.1
 Release:	1
 License:	wxWidgets Library License
 Group:		System/Libraries
