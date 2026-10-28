@@ -55,6 +55,10 @@ Source3:	http://jpegclub.org/exifautotran.txt
 BuildRequires:	cmake
 BuildRequires:	ninja
 BuildRequires:	nasm
+%if %{with compat32}
+# -m32 links libclang_rt.builtins from the i686 cross clang resource directory.
+BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
+%endif
 %if %{with java}
 BuildRequires:	jdk-current
 BuildRequires:	java-gui-current
