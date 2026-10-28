@@ -29,12 +29,10 @@
 
 %ifarch %{riscv}
 %bcond_with pgo
-%bcond_with java
 %else
 # Disable PGO when not using clang and/or when
 # bootstrapping (avoids a few dependencies)
 %bcond_without pgo
-%bcond_without java
 %endif
 
 Summary:	A MMX/SSE2 accelerated library for manipulating JPEG image files
@@ -58,10 +56,6 @@ BuildRequires:	nasm
 %if %{with compat32}
 # -m32 links libclang_rt.builtins from the i686 cross clang resource directory.
 BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
-%endif
-%if %{with java}
-BuildRequires:	jdk-current
-BuildRequires:	java-gui-current
 %endif
 %if %{with pgo}
 # Pull in some JPEG files so we can generate PGO data
@@ -117,6 +111,8 @@ linked with libjpeg.
 %package -n %{turbo}
 Summary:	TurboJPEG library
 Group:		System/Libraries
+# 3.2 moved the JNI API to the separate turbojpeg-java project.
+Obsoletes:	java-turbojpeg < 3.2.1
 
 %description -n %{turbo}
 This package contains the library needed to run programs dynamically
@@ -173,16 +169,6 @@ Wrjpgcom inserts text comments into a JPEG file. Jpegexiforient allow
 automatic lossless rotation of JPEG images from a digital camera which
 have orientation markings in the EXIF data.
 
-%if %{with java}
-%package -n java-turbojpeg
-Summary:	Java bindings to the turbojpeg library
-Requires:	%{turbo} = %{EVRD}
-Group:		Development/Java
-
-%description -n java-turbojpeg
-Java bindings to the turbojpeg library.
-%endif
-
 %if %{with compat32}
 %package -n %{lib32name}
 Summary:	A library for manipulating JPEG image format files (32-bit)
@@ -228,15 +214,10 @@ the libjpeg library.
 cp %{SOURCE2} jpegexiforient.c
 cp %{SOURCE3} exifautotran
 
-%if %{with java}
-. %{_sysconfdir}/profile.d/90java.sh
-%endif
-
 %if %{with compat32}
 export CFLAGS="%(echo %{optflags} | sed -e 's,-m64,,g') -m32"
 export LDFLAGS="%(echo %{build_ldflags} | sed -e 's,-m64,,g') -m32"
 %cmake32 -G Ninja \
-	-DWITH_JAVA:BOOL=OFF \
 	-DWITH_JPEG7:BOOL=ON \
 	-DWITH_JPEG8:BOOL=ON
 unset CFLAGS
@@ -299,9 +280,6 @@ buildit() {
 }
 
 buildit jpeg8 \
-%if %{with java}
-    -DWITH_JAVA:BOOL=ON \
-%endif
     -DWITH_JPEG7:BOOL=ON \
     -DWITH_JPEG8:BOOL=ON
 
@@ -357,11 +335,6 @@ install -m644 src/jpegint.h -D %{buildroot}%{_includedir}/jpegint.h
 %files -n jpeg-progs
 %{_bindir}/*
 %doc %{_mandir}/man1/*
-
-%if %{with java}
-%files -n java-turbojpeg
-%{_datadir}/java/turbojpeg.jar
-%endif
 
 %if %{with compat32}
 %files -n %{lib32name}
